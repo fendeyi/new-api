@@ -1,50 +1,101 @@
 version: '3.4'
 
 services:
-  new-api:
-    image: calciumion/new-api:latest
-    container_name: new-api
-    restart: always
+  master-new-api-0:
+    image: fandeyi/new-api:1.1.0
+    container_name: master-new-api-0
     command: --log-dir /app/logs
     ports:
       - "3000:3000"
     volumes:
-      - ./data:/data
-      - ./logs:/app/logs
+      - ./master-new-api-0/data:/data
+      - ./master-new-api-0/logs:/app/logs
     environment:
-      - SQL_DSN=root:123456@tcp(mysql:3306)/new-api  # Point to the mysql service
-      - REDIS_CONN_STRING=redis://redis
+      - SQL_DSN=new-api:kwanjmjdZSBEYis4@tcp(172.17.0.1:3306)/new-api?parseTime=true
+      - LOG_SQL_DSN=log-db:RKMDBwnc37ntMCLY@tcp(172.17.0.1:3306)/log-db?parseTime=true
+      - REDIS_CONN_STRING=redis://172.17.0.1:6379/0
       - TZ=Asia/Shanghai
-    #      - SESSION_SECRET=random_string  # 多机部署时设置，必须修改这个随机字符串！！！！！！！
-    #      - NODE_TYPE=slave  # Uncomment for slave node in multi-node deployment
-    #      - SYNC_FREQUENCY=60  # Uncomment if regular database syncing is needed
-    #      - FRONTEND_BASE_URL=https://openai.justsong.cn  # Uncomment for multi-node deployment with front-end URL
-
-#    depends_on:
-#      - redis
-#      - mysql
+      - SESSION_SECRET=8285bba413e770fe9620f1bf9b40d44e
+      - NODE_TYPE=master
+      - SYNC_FREQUENCY=60
     healthcheck:
       test: [ "CMD-SHELL", "wget -q -O - http://localhost:3000/api/status | grep -o '\"success\":\\s*true' | awk -F: '{print $2}'" ]
       interval: 30s
       timeout: 10s
       retries: 3
+    restart: always
 
-#  redis:
-#    image: redis:latest
-#    container_name: redis
-#    restart: always
-#
-#  mysql:
-#    image: mysql:8.2
-#    container_name: mysql
-#    restart: always
-#    environment:
-#      MYSQL_ROOT_PASSWORD: 123456  # Ensure this matches the password in SQL_DSN
-#      MYSQL_DATABASE: new-api
-#    volumes:
-#      - mysql_data:/var/lib/mysql
-    # ports:
-    #   - "3306:3306"  # If you want to access MySQL from outside Docker, uncomment
+  slave-new-api-1:
+    image: fandeyi/new-api:1.1.0
+    container_name: slave-new-api-1
+    command: --log-dir /app/logs
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./slave-new-api-1/data:/data
+      - ./slave-new-api-1/logs:/app/logs
+    environment:
+      - SQL_DSN=new-api:kwanjmjdZSBEYis4@tcp(172.17.0.1:3306)/new-api?parseTime=true
+      - LOG_SQL_DSN=log-db:RKMDBwnc37ntMCLY@tcp(172.17.0.1:3306)/log-db?parseTime=true
+      - REDIS_CONN_STRING=redis://172.17.0.1:6379/0
+      - TZ=Asia/Shanghai
+      - SESSION_SECRET=8285bba413e770fe9620f1bf9b40d44e
+      - NODE_TYPE=slave
+      - SYNC_FREQUENCY=60
+      - FRONTEND_BASE_URL=https://api-front.fandeyi.com
+    healthcheck:
+      test: [ "CMD-SHELL", "wget -q -O - http://localhost:3000/api/status | grep -o '\"success\":\\s*true' | awk -F: '{print $2}'" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: always
 
-#volumes:
-#  mysql_data:
+  slave-new-api-2:
+    image: fandeyi/new-api:1.1.0
+    container_name: slave-new-api-2
+    command: --log-dir /app/logs
+    ports:
+      - "3002:3000"
+    volumes:
+      - ./slave-new-api-2/data:/data
+      - ./slave-new-api-2/logs:/app/logs
+    environment:
+      - SQL_DSN=new-api:kwanjmjdZSBEYis4@tcp(172.17.0.1:3306)/new-api?parseTime=true
+      - LOG_SQL_DSN=log-db:RKMDBwnc37ntMCLY@tcp(172.17.0.1:3306)/log-db?parseTime=true
+      - REDIS_CONN_STRING=redis://172.17.0.1:6379/0
+      - TZ=Asia/Shanghai
+      - SESSION_SECRET=8285bba413e770fe9620f1bf9b40d44e
+      - NODE_TYPE=slave
+      - SYNC_FREQUENCY=60
+      - FRONTEND_BASE_URL=https://api-front.fandeyi.com
+    healthcheck:
+      test: [ "CMD-SHELL", "wget -q -O - http://localhost:3000/api/status | grep -o '\"success\":\\s*true' | awk -F: '{print $2}'" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: always
+
+  slave-new-api-3:
+    image: fandeyi/new-api:1.1.0
+    container_name: slave-new-api-3
+    command: --log-dir /app/logs
+    ports:
+      - "3003:3000"
+    volumes:
+      - ./slave-new-api-3/data:/data
+      - ./slave-new-api-3/logs:/app/logs
+    environment:
+      - SQL_DSN=new-api:kwanjmjdZSBEYis4@tcp(172.17.0.1:3306)/new-api?parseTime=true
+      - LOG_SQL_DSN=log-db:RKMDBwnc37ntMCLY@tcp(172.17.0.1:3306)/log-db?parseTime=true
+      - REDIS_CONN_STRING=redis://172.17.0.1:6379/0
+      - TZ=Asia/Shanghai
+      - SESSION_SECRET=8285bba413e770fe9620f1bf9b40d44e
+      - NODE_TYPE=slave
+      - SYNC_FREQUENCY=60
+      - FRONTEND_BASE_URL=https://api-front.fandeyi.com
+    healthcheck:
+      test: [ "CMD-SHELL", "wget -q -O - http://localhost:3000/api/status | grep -o '\"success\":\\s*true' | awk -F: '{print $2}'" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: always
