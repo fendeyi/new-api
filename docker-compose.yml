@@ -2,11 +2,11 @@ version: '3.4'
 
 services:
   master-new-api-0:
-    image: fandeyi/new-api:1.1.0
+    image: fandeyi/new-api:20241216
     container_name: master-new-api-0
     command: --log-dir /app/logs
     ports:
-      - "3000:3000"
+      - "4000:3000"
     volumes:
       - ./master-new-api-0/data:/data
       - ./master-new-api-0/logs:/app/logs
@@ -26,11 +26,11 @@ services:
     restart: always
 
   slave-new-api-1:
-    image: fandeyi/new-api:1.1.0
+    image: fandeyi/new-api:20241216
     container_name: slave-new-api-1
     command: --log-dir /app/logs
     ports:
-      - "3001:3000"
+      - "4001:3000"
     volumes:
       - ./slave-new-api-1/data:/data
       - ./slave-new-api-1/logs:/app/logs
@@ -51,11 +51,11 @@ services:
     restart: always
 
   slave-new-api-2:
-    image: fandeyi/new-api:1.1.0
+    image: fandeyi/new-api:20241216
     container_name: slave-new-api-2
     command: --log-dir /app/logs
     ports:
-      - "3002:3000"
+      - "4002:3000"
     volumes:
       - ./slave-new-api-2/data:/data
       - ./slave-new-api-2/logs:/app/logs
@@ -76,11 +76,11 @@ services:
     restart: always
 
   slave-new-api-3:
-    image: fandeyi/new-api:1.1.0
+    image: fandeyi/new-api:20241216
     container_name: slave-new-api-3
     command: --log-dir /app/logs
     ports:
-      - "3003:3000"
+      - "4003:3000"
     volumes:
       - ./slave-new-api-3/data:/data
       - ./slave-new-api-3/logs:/app/logs
